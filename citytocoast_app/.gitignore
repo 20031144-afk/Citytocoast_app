@@ -32,6 +32,13 @@ migrate_working_dir/
 .pub/
 /build/
 /coverage/
+.packages
+pubspec.lock
+.pub-cache/
+
+.idea/
+.vscode/
+*iml
 
 # Symbolication related
 app.*.symbols
