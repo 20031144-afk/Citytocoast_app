@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'payment_status_screen.dart';
 
 class PaymentScreen extends StatefulWidget {
   final String sitterName;
@@ -6,6 +7,7 @@ class PaymentScreen extends StatefulWidget {
   final String sitterImg;
   final DateTimeRange range;
   final TimeOfDay time;
+  final int hoursPerDay;
 
   const PaymentScreen({
     super.key,
@@ -14,6 +16,7 @@ class PaymentScreen extends StatefulWidget {
     required this.sitterImg,
     required this.range,
     required this.time,
+    required this.hoursPerDay,
   });
 
   @override
@@ -25,126 +28,128 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Calculate total
     int days = widget.range.duration.inDays + 1;
-    int hours = 2; // Example: fixed 2 hrs/day
-    int totalCost = widget.sitterRate * hours * days;
+    int totalCost = widget.sitterRate * widget.hoursPerDay * days;
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Payment")),
+      backgroundColor: Colors.grey[100],
+      appBar: AppBar(title: const Text("Payment Details")),
       body: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // Booking Summary
+            // Payment methods
+            _paymentMethodTile(
+              1,
+              "Visa Classic",
+              "**** 1254",
+              "https://img.icons8.com/color/48/visa.png",
+            ),
+            _paymentMethodTile(
+              2,
+              "MasterCard",
+              "**** 2541",
+              "https://img.icons8.com/color/48/mastercard.png",
+            ),
+            _paymentMethodTile(
+              3,
+              "Bank Transfer",
+              "**** 3126",
+              "https://img.icons8.com/color/48/bank.png",
+            ),
+
+            const SizedBox(height: 20),
+
+            // Payment info
             Card(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
               elevation: 3,
               child: ListTile(
-                leading: CircleAvatar(
-                  backgroundImage: NetworkImage(widget.sitterImg),
-                  radius: 30,
-                ),
-                title: Text(
-                  widget.sitterName,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                subtitle: Text(
-                  "${widget.range.start.day}/${widget.range.start.month} - "
-                  "${widget.range.end.day}/${widget.range.end.month}\n"
-                  "At ${widget.time.format(context)} • \$${widget.sitterRate}/hr",
-                ),
+                leading: const Icon(Icons.info, color: Colors.teal),
+                title: Text("From: Client"),
+                subtitle: Text("To: ${widget.sitterName}"),
               ),
             ),
+            const Spacer(),
 
-            const SizedBox(height: 20),
-
-            // Total
+            // Total cost
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  "Duration ($days day(s), $hours hrs/day)",
-                  style: const TextStyle(fontSize: 16, color: Colors.grey),
+                const Text(
+                  "Total",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 Text(
                   "\$$totalCost",
                   style: const TextStyle(
-                    fontSize: 18,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
+                    color: Colors.blue,
                   ),
                 ),
               ],
             ),
-            const Divider(height: 30, thickness: 1),
+            const SizedBox(height: 20),
 
-            // Payment Methods
-            RadioListTile<int>(
-              value: 1,
-              groupValue: _selectedMethod,
-              onChanged: (val) => setState(() => _selectedMethod = val!),
-              title: const Text("Credit / Debit Card"),
-              secondary: const Icon(Icons.credit_card, color: Colors.teal),
-            ),
-            RadioListTile<int>(
-              value: 2,
-              groupValue: _selectedMethod,
-              onChanged: (val) => setState(() => _selectedMethod = val!),
-              title: const Text("Wallet"),
-              secondary: const Icon(
-                Icons.account_balance_wallet,
-                color: Colors.teal,
-              ),
-            ),
-            RadioListTile<int>(
-              value: 3,
-              groupValue: _selectedMethod,
-              onChanged: (val) => setState(() => _selectedMethod = val!),
-              title: const Text("PayPal / UPI"),
-              secondary: const Icon(Icons.payment, color: Colors.teal),
-            ),
-
-            const Spacer(),
-
-            // Confirm button
+            // Pay button
             ElevatedButton(
               onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (ctx) => AlertDialog(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => PaymentStatusScreen(
+                      sitterName: widget.sitterName,
+                      totalCost: totalCost,
+                      method: _selectedMethod == 1
+                          ? "Visa Classic"
+                          : _selectedMethod == 2
+                          ? "MasterCard"
+                          : "Bank Transfer",
                     ),
-                    title: const Text("Payment Successful"),
-                    content: Text(
-                      "Your booking with ${widget.sitterName} is confirmed.\n"
-                      "Total Paid: \$$totalCost",
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(ctx);
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                        },
-                        child: const Text("OK"),
-                      ),
-                    ],
                   ),
                 );
               },
               style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 50),
+                minimumSize: const Size(double.infinity, 55),
+                backgroundColor: Colors.blue,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: Text("Pay \$$totalCost"),
+              child: Text(
+                "Pay \$$totalCost",
+                style: const TextStyle(fontSize: 16, color: Colors.white),
+              ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _paymentMethodTile(
+    int value,
+    String title,
+    String subtitle,
+    String iconUrl,
+  ) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 2,
+      child: ListTile(
+        leading: Image.network(iconUrl, height: 30),
+        title: Text(title),
+        subtitle: Text(subtitle),
+        trailing: Radio<int>(
+          value: value,
+          groupValue: _selectedMethod,
+          onChanged: (val) => setState(() => _selectedMethod = val!),
+        ),
+        onTap: () => setState(() => _selectedMethod = value),
       ),
     );
   }
