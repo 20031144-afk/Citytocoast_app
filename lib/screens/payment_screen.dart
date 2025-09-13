@@ -1,24 +1,34 @@
 import 'package:flutter/material.dart';
 
-class PaymentScreen extends StatelessWidget {
+class PaymentScreen extends StatefulWidget {
   final String sitterName;
   final int sitterRate;
-  final DateTime date;
+  final String sitterImg;
+  final DateTimeRange range;
   final TimeOfDay time;
 
   const PaymentScreen({
     super.key,
     required this.sitterName,
     required this.sitterRate,
-    required this.date,
+    required this.sitterImg,
+    required this.range,
     required this.time,
   });
 
   @override
+  State<PaymentScreen> createState() => _PaymentScreenState();
+}
+
+class _PaymentScreenState extends State<PaymentScreen> {
+  int _selectedMethod = 1;
+
+  @override
   Widget build(BuildContext context) {
-    // Example: assume booking for 2 hours
-    int hours = 2;
-    int totalCost = sitterRate * hours;
+    // Calculate total
+    int days = widget.range.duration.inDays + 1;
+    int hours = 2; // Example: fixed 2 hrs/day
+    int totalCost = widget.sitterRate * hours * days;
 
     return Scaffold(
       appBar: AppBar(title: const Text("Payment")),
@@ -31,19 +41,20 @@ class PaymentScreen extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
+              elevation: 3,
               child: ListTile(
-                leading: const CircleAvatar(
-                  backgroundImage: NetworkImage(
-                    "https://via.placeholder.com/100",
-                  ),
+                leading: CircleAvatar(
+                  backgroundImage: NetworkImage(widget.sitterImg),
                   radius: 30,
                 ),
                 title: Text(
-                  sitterName,
+                  widget.sitterName,
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 subtitle: Text(
-                  "${date.day}/${date.month}/${date.year} at ${time.format(context)}\nRate: \$$sitterRate/hr",
+                  "${widget.range.start.day}/${widget.range.start.month} - "
+                  "${widget.range.end.day}/${widget.range.end.month}\n"
+                  "At ${widget.time.format(context)} • \$${widget.sitterRate}/hr",
                 ),
               ),
             ),
@@ -54,9 +65,9 @@ class PaymentScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  "Duration (2 hrs)",
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                Text(
+                  "Duration ($days day(s), $hours hrs/day)",
+                  style: const TextStyle(fontSize: 16, color: Colors.grey),
                 ),
                 Text(
                   "\$$totalCost",
@@ -69,16 +80,30 @@ class PaymentScreen extends StatelessWidget {
             ),
             const Divider(height: 30, thickness: 1),
 
-            // Payment Options (placeholder)
-            ListTile(
-              leading: const Icon(Icons.credit_card),
-              title: const Text("Pay with Card"),
-              trailing: Radio(value: 1, groupValue: 1, onChanged: (_) {}),
+            // Payment Methods
+            RadioListTile<int>(
+              value: 1,
+              groupValue: _selectedMethod,
+              onChanged: (val) => setState(() => _selectedMethod = val!),
+              title: const Text("Credit / Debit Card"),
+              secondary: const Icon(Icons.credit_card, color: Colors.teal),
             ),
-            ListTile(
-              leading: const Icon(Icons.account_balance_wallet),
-              title: const Text("Pay with Wallet"),
-              trailing: Radio(value: 2, groupValue: 1, onChanged: (_) {}),
+            RadioListTile<int>(
+              value: 2,
+              groupValue: _selectedMethod,
+              onChanged: (val) => setState(() => _selectedMethod = val!),
+              title: const Text("Wallet"),
+              secondary: const Icon(
+                Icons.account_balance_wallet,
+                color: Colors.teal,
+              ),
+            ),
+            RadioListTile<int>(
+              value: 3,
+              groupValue: _selectedMethod,
+              onChanged: (val) => setState(() => _selectedMethod = val!),
+              title: const Text("PayPal / UPI"),
+              secondary: const Icon(Icons.payment, color: Colors.teal),
             ),
 
             const Spacer(),
@@ -94,14 +119,15 @@ class PaymentScreen extends StatelessWidget {
                     ),
                     title: const Text("Payment Successful"),
                     content: Text(
-                      "Your booking with $sitterName is confirmed.",
+                      "Your booking with ${widget.sitterName} is confirmed.\n"
+                      "Total Paid: \$$totalCost",
                     ),
                     actions: [
                       TextButton(
                         onPressed: () {
-                          Navigator.pop(ctx); // close dialog
-                          Navigator.pop(context); // back to booking
-                          Navigator.pop(context); // back to homepage
+                          Navigator.pop(ctx);
+                          Navigator.pop(context);
+                          Navigator.pop(context);
                         },
                         child: const Text("OK"),
                       ),

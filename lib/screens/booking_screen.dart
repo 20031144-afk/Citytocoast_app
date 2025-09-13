@@ -2,25 +2,37 @@ import 'package:flutter/material.dart';
 import 'payment_screen.dart';
 
 class BookingScreen extends StatefulWidget {
-  const BookingScreen({super.key});
+  final String sitterName;
+  final int sitterRate;
+  final String sitterImg;
+
+  const BookingScreen({
+    super.key,
+    required this.sitterName,
+    required this.sitterRate,
+    required this.sitterImg,
+  });
 
   @override
   State<BookingScreen> createState() => _BookingScreenState();
 }
 
 class _BookingScreenState extends State<BookingScreen> {
-  DateTime? selectedDate;
+  DateTimeRange? selectedRange;
   TimeOfDay? selectedTime;
 
-  Future<void> _pickDate() async {
-    final DateTime? picked = await showDatePicker(
+  Future<void> _pickDateRange() async {
+    final DateTimeRange? picked = await showDateRangePicker(
       context: context,
-      initialDate: DateTime.now().add(const Duration(days: 1)),
+      initialDateRange: DateTimeRange(
+        start: DateTime.now().add(const Duration(days: 1)),
+        end: DateTime.now().add(const Duration(days: 1)),
+      ),
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
     );
     if (picked != null) {
-      setState(() => selectedDate = picked);
+      setState(() => selectedRange = picked);
     }
   }
 
@@ -42,38 +54,41 @@ class _BookingScreenState extends State<BookingScreen> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            // Placeholder sitter info
+            // Sitter Info Card
             Card(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
+              elevation: 3,
               child: ListTile(
-                leading: const CircleAvatar(
-                  backgroundImage: NetworkImage(
-                    "https://via.placeholder.com/100",
-                  ),
+                leading: CircleAvatar(
+                  backgroundImage: NetworkImage(widget.sitterImg),
                   radius: 30,
                 ),
-                title: const Text("Jane Doe"),
-                subtitle: const Text("\$15/hr • Rating: 4.8"),
+                title: Text(
+                  widget.sitterName,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text("\$${widget.sitterRate}/hr • Rating: 4.8"),
               ),
             ),
             const SizedBox(height: 20),
 
-            // Date picker
+            // Date range picker
             ListTile(
-              leading: const Icon(Icons.calendar_today),
+              leading: const Icon(Icons.calendar_today, color: Colors.teal),
               title: Text(
-                selectedDate == null
-                    ? "Choose Date"
-                    : "${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}",
+                selectedRange == null
+                    ? "Select Date(s)"
+                    : "${selectedRange!.start.day}/${selectedRange!.start.month} - "
+                          "${selectedRange!.end.day}/${selectedRange!.end.month}",
               ),
-              onTap: _pickDate,
+              onTap: _pickDateRange,
             ),
 
             // Time picker
             ListTile(
-              leading: const Icon(Icons.access_time),
+              leading: const Icon(Icons.access_time, color: Colors.teal),
               title: Text(
                 selectedTime == null
                     ? "Choose Time"
@@ -86,15 +101,16 @@ class _BookingScreenState extends State<BookingScreen> {
 
             // Confirm button
             ElevatedButton(
-              onPressed: (selectedDate != null && selectedTime != null)
+              onPressed: (selectedRange != null && selectedTime != null)
                   ? () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (_) => PaymentScreen(
-                            sitterName: "Jane Doe",
-                            sitterRate: 15,
-                            date: selectedDate!,
+                            sitterName: widget.sitterName,
+                            sitterRate: widget.sitterRate,
+                            sitterImg: widget.sitterImg,
+                            range: selectedRange!,
                             time: selectedTime!,
                           ),
                         ),

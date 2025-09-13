@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'booking_screen.dart';
 import 'chat_screen.dart';
+import 'sitters_list_screen.dart';
 import '../services/review_service.dart';
 
 class HomePageScreen extends StatefulWidget {
@@ -76,7 +77,9 @@ class _HomePageScreenState extends State<HomePageScreen> {
                 Navigator.pop(context); // close drawer
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const BookingScreen()),
+                  MaterialPageRoute(
+                    builder: (_) => SittersListScreen(sitters: sitters),
+                  ),
                 );
               },
             ),
@@ -195,7 +198,13 @@ class _HomePageScreenState extends State<HomePageScreen> {
                 onBook: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => const BookingScreen()),
+                    MaterialPageRoute(
+                      builder: (_) => BookingScreen(
+                        sitterName: s["name"],
+                        sitterRate: s["rate"],
+                        sitterImg: s["img"],
+                      ),
+                    ),
                   );
                 },
               );
