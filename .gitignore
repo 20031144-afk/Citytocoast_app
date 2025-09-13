@@ -56,6 +56,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+/android/app/google-services.json   # 🔥 ignore Firebase config
 
 # =====================================
 # iOS
@@ -67,6 +68,7 @@ app.*.map.json
 *.xcuserdatad
 *.xcworkspace
 *.xcuserstate
+/ios/Runner/GoogleService-Info.plist   # 🔥 ignore iOS Firebase config
 
 # =====================================
 # macOS
