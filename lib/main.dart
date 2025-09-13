@@ -6,9 +6,10 @@ import 'screens/verification_screen.dart';
 import 'screens/homepage_client.dart';
 import 'screens/homepage_provider.dart';
 import 'screens/chat_screen.dart';
+//import 'package:firebase_core/firebase_core.dart';
 
 void main() {
-  runApp(CityToCoastApp());
+  runApp(const CityToCoastApp());
 }
 
 class CityToCoastApp extends StatelessWidget {
@@ -25,7 +26,7 @@ class CityToCoastApp extends StatelessWidget {
         '/login': (context) => LoginScreen(),
         '/signup': (context) => SignUpScreen(),
         '/verify': (context) => VerificationScreen(),
-        '/clientHome': (context) => HomeClientScreen(),
+        '/clientHome': (context) => HomePageScreen(),
         '/providerHome': (context) => ProviderHomePage(),
         '/chat': (context) => ChatScreen(),
       },

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:fl_chart/fl_chart.dart';
 
 class ProviderHomePage extends StatefulWidget {
   const ProviderHomePage({super.key});
@@ -10,149 +11,203 @@ class ProviderHomePage extends StatefulWidget {
 }
 
 class _ProviderHomePageState extends State<ProviderHomePage> {
-  final List<String> _comments = [
-    "Loved the pet sitting service!",
-    "The nanny was amazing with my child.",
-    "Great caring service experience.",
-    "WAS really a terrrible experience with that carer.",
-    "Would not recommend.",
-    "Friendly and professional team.",
-    "Highly recommend for pet care.",
-    "Excellent babysitting service!",
-    "😍",
-    "😡",
-    "😊",
-    "😞",
-  ];
-
-  // store sentiment results
-  final Map<int, Map<String, dynamic>> _sentimentResults = {};
+  bool _loading = true;
+  Map<String, dynamic> _summary = {};
+  List<Map<String, dynamic>> _reviews = [];
+  final String baseUrl = "http://127.0.0.1:8000";
 
   @override
   void initState() {
     super.initState();
-    _analyzeAllComments();
+    _fetchData();
   }
 
-  Future<void> _analyzeAllComments() async {
-    for (int i = 0; i < _comments.length; i++) {
-      await _analyzeComment(i, _comments[i]);
-    }
-  }
-
-  Future<void> _analyzeComment(int index, String text) async {
+  Future<void> _fetchData() async {
     try {
-      final response = await http.post(
-        Uri.parse("http://10.0.2.2:8000/analyze"), // 🔗 FastAPI
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({"text": text}),
-      );
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+      final summaryRes = await http.get(Uri.parse("$baseUrl/summary"));
+      final reviewsRes = await http.get(Uri.parse("$baseUrl/reviews"));
+      if (summaryRes.statusCode == 200 && reviewsRes.statusCode == 200) {
         setState(() {
-          _sentimentResults[index] = {
-            "sentiment": data["sentiment"],
-            "compound": data["scores"]["compound"],
-          };
-        });
-      } else {
-        setState(() {
-          _sentimentResults[index] = {"sentiment": "Error"};
+          _summary = jsonDecode(summaryRes.body);
+          _reviews = List<Map<String, dynamic>>.from(
+            jsonDecode(reviewsRes.body),
+          );
+          _loading = false;
         });
       }
     } catch (e) {
-      setState(() {
-        _sentimentResults[index] = {"sentiment": "Error"};
-      });
+      debugPrint("Error fetching dashboard: $e");
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Provider Dashboard"),
-        backgroundColor: Colors.purpleAccent,
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(color: Colors.purpleAccent),
-              child: Text(
-                "Menu",
-                style: TextStyle(color: Colors.white, fontSize: 24),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text("Profile"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.calendar_today),
-              title: const Text("Bookings"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.message),
-              title: const Text("Messages"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text("Settings"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text("Log Out"),
-              onTap: () {},
-            ),
-          ],
-        ),
-      ),
-      body: RefreshIndicator(
-        onRefresh: _analyzeAllComments,
-        child: ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: _comments.length,
-          itemBuilder: (context, index) {
-            final result = _sentimentResults[index];
-            final sentiment = result?["sentiment"] ?? "Analyzing...";
-            final compound = result?["compound"] ?? 0.0;
-
-            return Card(
-              margin: const EdgeInsets.symmetric(vertical: 8),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _comments[index],
-                      style: const TextStyle(fontSize: 16),
+      appBar: AppBar(title: const Text("Admin Dashboard")),
+      body: _loading
+          ? const Center(child: CircularProgressIndicator())
+          : ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                // Sentiment Pie Chart
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        const Text(
+                          "Overall Sentiment",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 200,
+                          child: PieChart(
+                            PieChartData(
+                              sections: [
+                                PieChartSectionData(
+                                  value: _summary["positive_percent"],
+                                  color: Colors.green,
+                                  title: "Positive",
+                                ),
+                                PieChartSectionData(
+                                  value: _summary["neutral_percent"],
+                                  color: Colors.orange,
+                                  title: "Neutral",
+                                ),
+                                PieChartSectionData(
+                                  value: _summary["negative_percent"],
+                                  color: Colors.red,
+                                  title: "Negative",
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 8),
-                    Text("Sentiment: $sentiment"),
-                    const SizedBox(height: 4),
-                    LinearProgressIndicator(
-                      value: (compound + 1) / 2, // normalize -1 → 1 into 0 → 1
-                      backgroundColor: Colors.grey[300],
-                      color: compound >= 0.05
-                          ? Colors.green
-                          : (compound <= -0.05 ? Colors.red : Colors.orange),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                // Stats Cards
+                Row(
+                  children: [
+                    _statCard(
+                      "Total Reviews",
+                      _summary["total_reviews"].toString(),
+                      Icons.comment,
+                    ),
+                    _statCard(
+                      "New Users",
+                      _summary["new_users"].toString(),
+                      Icons.person_add,
+                    ),
+                    _statCard(
+                      "Reactions",
+                      _summary["total_reactions"].toString(),
+                      Icons.thumb_up,
                     ),
                   ],
                 ),
+                const SizedBox(height: 20),
+                const Text(
+                  "Recent Feedbacks",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                ..._reviews.map(
+                  (r) => _feedbackCard(
+                    username: r["user"],
+                    img: r["img"],
+                    comment: r["text"],
+                    sentiment: r["sentiment"],
+                    score: r["scores"]["compound"],
+                    date: r["date"],
+                  ),
+                ),
+              ],
+            ),
+    );
+  }
+
+  Widget _statCard(String title, String value, IconData icon) {
+    return Expanded(
+      child: Card(
+        margin: const EdgeInsets.symmetric(horizontal: 6),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Icon(icon, size: 28, color: Colors.teal),
+              const SizedBox(height: 6),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            );
-          },
+              Text(title, style: const TextStyle(color: Colors.grey)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _feedbackCard({
+    required String username,
+    required String img,
+    required String comment,
+    required String sentiment,
+    required double score,
+    required String date,
+  }) {
+    Color color = sentiment == "positive"
+        ? Colors.green
+        : sentiment == "negative"
+        ? Colors.red
+        : Colors.orange;
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                CircleAvatar(backgroundImage: NetworkImage(img), radius: 20),
+                const SizedBox(width: 8),
+                Text(
+                  username,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const Spacer(),
+                Text(
+                  date.split("T").first,
+                  style: const TextStyle(color: Colors.grey, fontSize: 12),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            Text(comment),
+            const SizedBox(height: 8),
+            LinearProgressIndicator(
+              value: (score + 1) / 2,
+              color: color,
+              backgroundColor: Colors.grey[300],
+              minHeight: 6,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Sentiment: $sentiment", style: TextStyle(color: color)),
+                Text("Score: ${score.toStringAsFixed(2)}"),
+              ],
+            ),
+          ],
         ),
       ),
     );

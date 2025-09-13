@@ -1,31 +1,102 @@
-# Flutter/Dart/Pub
-.dart_tool/
+# =====================================
+# General
+# =====================================
+*.class
+*.log
+*.pyc
+*.pyo
+*.pyd
+*.swp
+.DS_Store
+.atom/
+.build/
 .buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# =====================================
+# IDE / Editor
+# =====================================
+*.iml
+*.ipr
+*.iws
+.idea/
+.vscode/
+
+# =====================================
+# Flutter / Dart
+# =====================================
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
 .packages
 .pub-cache/
 .pub/
 build/
-.flutter-plugins
-.flutter-plugins-dependencies
-.flutter-version
-.idea/
-*.iml
-*.log
-*.lock
-*.DS_Store
-.vscode/
+coverage/
+.generated/
 
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# =====================================
 # Android
+# =====================================
 /android/.gradle/
-android/app/debug/
-android/app/profile/
-android/app/build/
-android/local.properties
+/android/app/build/
+/android/local.properties
+**/cxx/
+/android/app/debug
+/android/app/profile
+/android/app/release
 
+# =====================================
 # iOS
-ios/Flutter/Flutter.framework
-ios/Flutter/Flutter.podspec
-ios/Pods/
-ios/.symlinks/
-ios/Runner.xcworkspace/
-ios/Flutter/Generated.xcconfig
+# =====================================
+/ios/Pods/
+/ios/Flutter/Flutter.podspec
+/ios/Flutter/ephemeral/
+/ios/Runner.xcworkspace
+*.xcuserdatad
+*.xcworkspace
+*.xcuserstate
+
+# =====================================
+# macOS
+# =====================================
+/macos/Flutter/ephemeral/
+/macos/Pods/
+/macos/build/
+
+# =====================================
+# Linux
+# =====================================
+/linux/build/
+
+# =====================================
+# Windows
+# =====================================
+/windows/build/
+
+# =====================================
+# Backend (FastAPI + Python)
+# =====================================
+Backend/__pycache__/
+/Backend/venv/
+/Backend/.pytest_cache/
+Backend/*.egg-info/
+*.sqlite3
+
+# =====================================
+# Logs
+# =====================================
+*.log
+*.tmp
+*.bak

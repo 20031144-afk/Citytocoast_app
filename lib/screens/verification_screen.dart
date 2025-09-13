@@ -51,7 +51,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
       backgroundColor: const Color(0xFFF2F2F2), // Light gray background
       appBar: AppBar(
         title: const Text("Verify Account"),
-        backgroundColor: Colors.purpleAccent,
+        backgroundColor: const Color.fromARGB(255, 178, 166, 231),
       ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -61,7 +61,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
             const SizedBox(height: 40),
             const Text(
               "Enter the 4-digit code sent to your email/phone",
-              style: TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: 16),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 30),
@@ -78,7 +78,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  backgroundColor: Colors.purpleAccent,
+                  backgroundColor: Color.fromARGB(255, 216, 197, 228),
                 ),
                 onPressed: () {
                   // Collect OTP
@@ -106,7 +106,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
               },
               child: const Text(
                 "Resend Code",
-                style: TextStyle(color: Colors.purpleAccent),
+                style: TextStyle(color: Color.fromARGB(255, 9, 224, 20)),
               ),
             ),
           ],

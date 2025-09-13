@@ -1,6 +1,6 @@
 {
-    "name": "citytocoast_app",
-    "short_name": "citytocoast_app",
+    "name": "citytocoast_app1",
+    "short_name": "citytocoast_app1",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

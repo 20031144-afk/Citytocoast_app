@@ -10,6 +10,10 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   bool _obscurePassword = true;
 
+  // Controllers for fields
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -60,13 +64,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   children: [
                     TextField(
+                      controller: _usernameController,
                       decoration: const InputDecoration(
-                        labelText: "Email or Phone",
+                        labelText: "Email or Username",
                         prefixIcon: Icon(Icons.person_outline),
                       ),
                     ),
                     const SizedBox(height: 16),
                     TextField(
+                      controller: _passwordController,
                       obscureText: _obscurePassword,
                       decoration: InputDecoration(
                         labelText: "Password",
@@ -92,8 +98,21 @@ class _LoginScreenState extends State<LoginScreen> {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
-                          // TODO: authentication logic
-                          Navigator.pushNamed(context, '/clientHome');
+                          final username = _usernameController.text.trim();
+                          final password = _passwordController.text.trim();
+
+                          // ✅ Hardcoded check for provider login
+                          if (username == "admin" && password == "admin") {
+                            Navigator.pushReplacementNamed(
+                              context,
+                              '/providerHome',
+                            );
+                          } else {
+                            Navigator.pushReplacementNamed(
+                              context,
+                              '/clientHome',
+                            );
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.teal.shade600,

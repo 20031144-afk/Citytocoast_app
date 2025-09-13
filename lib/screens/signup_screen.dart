@@ -30,18 +30,33 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.dispose();
   }
 
+  void _signup() {
+    if (!_agree) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("You must agree to terms.")));
+      return;
+    }
+
+    if (_passwordController.text != _confirmController.text) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Passwords do not match.")));
+      return;
+    }
+
+    // For now, just navigate to verification screen
+    Navigator.pushNamed(context, '/verify');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // Background
           Image.asset('assets/images/background1.jpg', fit: BoxFit.cover),
-          Container(
-            color: Colors.black.withOpacity(0.4), // Dark overlay
-          ),
-          // Form
+          Container(color: Colors.black.withOpacity(0.4)),
           SingleChildScrollView(
             padding: const EdgeInsets.all(24),
             child: Column(
@@ -62,7 +77,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 24),
-                // User Type Toggle
                 ToggleButtons(
                   borderRadius: BorderRadius.circular(12),
                   selectedColor: Colors.white,
@@ -86,7 +100,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ],
                 ),
                 const SizedBox(height: 24),
-                // Input Fields
                 _buildTextField(
                   "Full Name",
                   _fullNameController,
@@ -137,7 +150,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                // Agree Terms
                 Row(
                   children: [
                     Checkbox(
@@ -153,7 +165,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ],
                 ),
                 const SizedBox(height: 12),
-                // Sign Up Button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -164,9 +175,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       backgroundColor: Colors.purpleAccent,
                     ),
-                    onPressed: _agree
-                        ? () => Navigator.pushNamed(context, '/verify')
-                        : null,
+                    onPressed: _signup,
                     child: const Text(
                       "Sign Up",
                       style: TextStyle(
