@@ -1,143 +1,214 @@
 import 'package:flutter/material.dart';
+import 'sitter.dart';
 import 'payment_screen.dart';
 
 class BookingScreen extends StatefulWidget {
-  final String sitterName;
-  final int sitterRate;
-  final String sitterImg;
+  final Sitter sitter;
 
-  const BookingScreen({
-    super.key,
-    required this.sitterName,
-    required this.sitterRate,
-    required this.sitterImg,
-  });
+  const BookingScreen({Key? key, required this.sitter}) : super(key: key);
 
   @override
   State<BookingScreen> createState() => _BookingScreenState();
 }
 
 class _BookingScreenState extends State<BookingScreen> {
-  DateTimeRange? selectedRange;
-  TimeOfDay? selectedTime;
-  int hoursPerDay = 2;
+  DateTime? selectedDate;
+  String? selectedTime;
+  int duration = 2;
+  String specialRequests = "";
 
-  Future<void> _pickDateRange() async {
-    final DateTimeRange? picked = await showDateRangePicker(
-      context: context,
-      initialDateRange: DateTimeRange(
-        start: DateTime.now().add(const Duration(days: 1)),
-        end: DateTime.now().add(const Duration(days: 1)),
-      ),
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
-    );
-    if (picked != null) setState(() => selectedRange = picked);
-  }
+  final double serviceFee = 10.0;
 
-  Future<void> _pickTime() async {
-    final TimeOfDay? picked = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
-    if (picked != null) setState(() => selectedTime = picked);
-  }
+  final List<String> timeSlots = [
+    "9:00 AM",
+    "12:00 PM",
+    "3:00 PM",
+    "6:00 PM",
+    "7:00 PM",
+    "8:00 PM",
+  ];
+
+  double get totalCost => (widget.sitter.ratePerHour * duration) + serviceFee;
+
+  bool get isFormComplete =>
+      selectedDate != null && selectedTime != null && duration > 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
-      appBar: AppBar(title: const Text("Booking Your Date")),
-      body: Padding(
+      appBar: AppBar(
+        title: Text("Book ${widget.sitter.name}"),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        elevation: 0,
+      ),
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Sitter card
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              elevation: 3,
-              child: ListTile(
-                leading: CircleAvatar(
-                  backgroundImage: NetworkImage(widget.sitterImg),
-                  radius: 28,
+            // 🔹 Date Picker
+            _sectionTitle("Select Date"),
+            GestureDetector(
+              onTap: () async {
+                DateTime? picked = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime.now(),
+                  lastDate: DateTime(2100),
+                );
+                if (picked != null) {
+                  setState(() => selectedDate = picked);
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
                 ),
-                title: Text(
-                  widget.sitterName,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade300),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                subtitle: Text("\$${widget.sitterRate}/hr • ⭐ 4.8"),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      selectedDate != null
+                          ? "${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}"
+                          : "dd/mm/yyyy",
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const Icon(Icons.calendar_today),
+                  ],
+                ),
               ),
             ),
+
             const SizedBox(height: 20),
 
-            // Date range
-            _buildOptionTile(
-              icon: Icons.calendar_today,
-              label: selectedRange == null
-                  ? "Select Date(s)"
-                  : "${selectedRange!.start.day}/${selectedRange!.start.month} - ${selectedRange!.end.day}/${selectedRange!.end.month}",
-              onTap: _pickDateRange,
+            // 🔹 Time Slots
+            _sectionTitle("Select Time"),
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: timeSlots.map((time) {
+                final isSelected = selectedTime == time;
+                return ChoiceChip(
+                  label: Text(time),
+                  selected: isSelected,
+                  onSelected: (_) {
+                    setState(() => selectedTime = time);
+                  },
+                  selectedColor: Colors.black,
+                  labelStyle: TextStyle(
+                    color: isSelected ? Colors.white : Colors.black,
+                  ),
+                  backgroundColor: Colors.grey.shade100,
+                );
+              }).toList(),
             ),
 
-            // Time
-            _buildOptionTile(
-              icon: Icons.access_time,
-              label: selectedTime == null
-                  ? "Choose Time"
-                  : selectedTime!.format(context),
-              onTap: _pickTime,
-            ),
+            const SizedBox(height: 20),
 
-            // Hours slider
-            ListTile(
-              leading: const Icon(Icons.timer, color: Colors.teal),
-              title: Text("Hours per day: $hoursPerDay"),
-              subtitle: Slider(
-                value: hoursPerDay.toDouble(),
-                min: 1,
-                max: 12,
-                divisions: 11,
-                label: "$hoursPerDay",
-                onChanged: (val) {
-                  setState(() => hoursPerDay = val.toInt());
-                },
-              ),
-            ),
-
-            const Spacer(),
-
-            // Continue button
-            ElevatedButton(
-              onPressed: (selectedRange != null && selectedTime != null)
-                  ? () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => PaymentScreen(
-                            sitterName: widget.sitterName,
-                            sitterRate: widget.sitterRate,
-                            sitterImg: widget.sitterImg,
-                            range: selectedRange!,
-                            time: selectedTime!,
-                            hoursPerDay: hoursPerDay,
-                          ),
-                        ),
-                      );
+            // 🔹 Duration
+            _sectionTitle("Duration (hours)"),
+            Row(
+              children: [
+                IconButton(
+                  onPressed: () {
+                    if (duration > 1) {
+                      setState(() => duration--);
                     }
-                  : null,
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 55),
-                backgroundColor: Colors.blue,
-                shape: RoundedRectangleBorder(
+                  },
+                  icon: const Icon(Icons.remove_circle_outline),
+                ),
+                Text("$duration", style: const TextStyle(fontSize: 18)),
+                IconButton(
+                  onPressed: () {
+                    setState(() => duration++);
+                  },
+                  icon: const Icon(Icons.add_circle_outline),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 20),
+
+            // 🔹 Special Requests
+            _sectionTitle("Special Requests"),
+            TextField(
+              maxLines: 2,
+              decoration: InputDecoration(
+                hintText: "Any special instructions or requirements...",
+                border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text(
-                "Continue",
-                style: TextStyle(fontSize: 16, color: Colors.white),
+              onChanged: (val) => setState(() => specialRequests = val),
+            ),
+
+            const SizedBox(height: 20),
+
+            // 🔹 Cost Summary
+            _sectionTitle("Cost Summary"),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                children: [
+                  _costRow(
+                    "Service ($duration hours)",
+                    "\$${(widget.sitter.ratePerHour * duration).toStringAsFixed(0)}",
+                  ),
+                  _costRow("Service Fee", "\$${serviceFee.toStringAsFixed(0)}"),
+                  const Divider(),
+                  _costRow(
+                    "Total",
+                    "\$${totalCost.toStringAsFixed(0)}",
+                    isBold: true,
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 30),
+
+            // 🔹 Continue to Payment
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: isFormComplete
+                    ? () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => PaymentScreen(
+                              sitter: widget.sitter,
+                              date: selectedDate!,
+                              time: selectedTime!,
+                              duration: duration,
+                              totalCost: totalCost,
+                              specialRequests: specialRequests,
+                            ),
+                          ),
+                        );
+                      }
+                    : null,
+                child: const Text(
+                  "Continue to Payment",
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
               ),
             ),
           ],
@@ -146,20 +217,36 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
-  Widget _buildOptionTile({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-  }) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 2,
-      child: ListTile(
-        leading: Icon(icon, color: Colors.teal),
-        title: Text(label),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-        onTap: onTap,
+  // 🔹 Helpers
+  Widget _sectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Text(
+        title,
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+      ),
+    );
+  }
+
+  Widget _costRow(String label, String value, {bool isBold = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+          Text(
+            value,
+            style: TextStyle(
+              fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+        ],
       ),
     );
   }

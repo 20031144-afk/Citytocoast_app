@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'booking_screen.dart';
-import 'chat_screen.dart';
-import 'sitters_list_screen.dart';
-import '../services/review_service.dart';
+import 'sitter.dart';
+import 'sitter_profile_page.dart';
+import 'FeaturedSittersScreen.dart';
+import 'sitters_list.dart'; // now returns List<Sitter>
 
 class HomePageScreen extends StatefulWidget {
   const HomePageScreen({super.key});
@@ -12,273 +12,217 @@ class HomePageScreen extends StatefulWidget {
 }
 
 class _HomePageScreenState extends State<HomePageScreen> {
-  final ReviewService _reviewService = ReviewService();
-  List<Map<String, dynamic>> posts = [];
-  bool _loading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchReviews();
-  }
-
-  Future<void> _fetchReviews() async {
-    try {
-      final data = await _reviewService.fetchReviews();
-      setState(() {
-        posts = data;
-        _loading = false;
-      });
-    } catch (e) {
-      debugPrint("Error fetching reviews: $e");
-    }
-  }
+  String selectedCategory = "both";
+  String searchQuery = "";
 
   @override
   Widget build(BuildContext context) {
-    final sitters = _generateSitters();
+    // 🔹 Filter sitters by category + search query
+    final filteredSitters = sitterList.where((sitter) {
+      final matchesCategory =
+          selectedCategory == "both" || sitter.tags.contains(selectedCategory);
+      final matchesSearch = sitter.name.toLowerCase().contains(
+        searchQuery.toLowerCase(),
+      );
+      return matchesCategory && matchesSearch;
+    }).toList();
 
     return Scaffold(
-      appBar: AppBar(title: const Text("City to Coast"), centerTitle: true),
-
-      // 🔹 Drawer with Book Now
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            const UserAccountsDrawerHeader(
-              accountName: Text("Client User"),
-              accountEmail: Text("client@example.com"),
-              currentAccountPicture: CircleAvatar(
-                backgroundImage: NetworkImage(
-                  "https://i.pravatar.cc/150?img=15",
-                ),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text("Profile"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.book),
-              title: const Text("My Bookings"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text("Settings"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.book_online),
-              title: const Text("Book Now"),
-              onTap: () {
-                Navigator.pop(context); // close drawer
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => SittersListScreen(sitters: sitters),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text("Logout"),
-              onTap: () {
-                Navigator.pushReplacementNamed(context, "/login");
-              },
-            ),
-          ],
-        ),
-      ),
-
-      // 🔹 Feed with reviews + sitters once
+      backgroundColor: Colors.white,
       body: SafeArea(
-        child: _loading
-            ? const Center(child: CircularProgressIndicator())
-            : ListView.builder(
-                padding: const EdgeInsets.fromLTRB(12, 12, 12, 150),
-                itemCount: posts.length + 1, // reviews + 1 sitters section
-                itemBuilder: (context, index) {
-                  if (index == 3) {
-                    // show sitters only once after 3 reviews
-                    return _sittersCarousel(context, sitters);
-                  } else {
-                    final post = posts[index < 3 ? index : index - 1];
-                    return _buildPost(
-                      username: post["user"] ?? "Anonymous",
-                      userImg: post["img"] ?? "https://i.pravatar.cc/150?img=1",
-                      content: post["text"] ?? "",
-                    );
-                  }
-                },
-              ),
-      ),
-
-      // 🔹 Floating chat button
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const ChatScreen()),
-          );
-        },
-        child: const Icon(Icons.chat),
-      ),
-    );
-  }
-
-  // 🔹 Feed Post
-  Widget _buildPost({
-    required String username,
-    required String userImg,
-    required String content,
-  }) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CircleAvatar(backgroundImage: NetworkImage(userImg), radius: 25),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    username,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 🔹 Gradient Header
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0xFF6A5AE0), Color(0xFF5ED0FB)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
-                  const SizedBox(height: 6),
-                  Text(content, style: const TextStyle(fontSize: 14)),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Header row
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Hello, Ashma!",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pushReplacementNamed(context, "/");
+                          },
+                          child: const Text(
+                            "Logout",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      "Find trusted sitters near you",
+                      style: TextStyle(color: Colors.white70),
+                    ),
+                    const SizedBox(height: 16),
 
-  // 🔹 Sitters carousel
-  Widget _sittersCarousel(
-    BuildContext context,
-    List<Map<String, dynamic>> sitters,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 16),
-        const Text(
-          "Sitters Nearby",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 10),
-        SizedBox(
-          height: 280,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: sitters.length,
-            itemBuilder: (context, index) {
-              final s = sitters[index];
-              return _buildSitterCard(
-                name: s["name"],
-                rate: s["rate"],
-                rating: s["rating"],
-                available: s["available"],
-                img: s["img"],
-                onBook: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => BookingScreen(
-                        sitterName: s["name"],
-                        sitterRate: s["rate"],
-                        sitterImg: s["img"],
+                    // Search bar
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: TextField(
+                        decoration: const InputDecoration(
+                          icon: Icon(Icons.search),
+                          hintText: "Search for sitters...",
+                          border: InputBorder.none,
+                        ),
+                        onChanged: (val) {
+                          setState(() => searchQuery = val);
+                        },
                       ),
                     ),
-                  );
-                },
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
+                  ],
+                ),
+              ),
 
-  // 🔹 Sitter card
-  Widget _buildSitterCard({
-    required String name,
-    required int rate,
-    required double rating,
-    required bool available,
-    required String img,
-    required VoidCallback onBook,
-  }) {
-    return Container(
-      width: 180,
-      margin: const EdgeInsets.only(right: 12),
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        elevation: 3,
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              CircleAvatar(radius: 40, backgroundImage: NetworkImage(img)),
+              const SizedBox(height: 16),
+
+              // 🔹 Category Toggle
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _categoryButton("Baby Care", "baby"),
+                    _categoryButton("Pet Care", "pet"),
+                    _categoryButton("Both", "both"),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              // 🔹 Featured Sitters Section
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Featured Sitters",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                FeaturedSittersScreen(sitters: filteredSitters),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        "See All",
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               const SizedBox(height: 10),
-              Text(
-                name,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
+
+              // 🔹 Sitters List (show top 3 only)
+              ...filteredSitters.take(3).map((s) => _sitterCard(context, s)),
+
+              const SizedBox(height: 20),
+
+              // 🔹 Quick Actions Section
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: const Text(
+                  "Quick Actions",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ),
-              const SizedBox(height: 4),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.star, color: Colors.amber, size: 18),
-                  Text(
-                    rating.toString(),
-                    style: const TextStyle(fontWeight: FontWeight.w500),
+              const SizedBox(height: 10),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: GridView.count(
+                  shrinkWrap: true,
+                  crossAxisCount: 2,
+                  childAspectRatio: 2.3,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    _quickAction(
+                      context,
+                      icon: Icons.timer,
+                      text: "Emergency Booking",
+                      route: "/emergencyBooking",
+                    ),
+                    _quickAction(
+                      context,
+                      icon: Icons.favorite,
+                      text: "My Favorites",
+                      route: "/favorites",
+                    ),
+                    _quickAction(
+                      context,
+                      icon: Icons.forum,
+                      text: "Community Feed",
+                      route: "/communityFeed",
+                    ),
+                    _quickAction(
+                      context,
+                      icon: Icons.book,
+                      text: "My Bookings",
+                      route: "/myBookings",
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              // Admin Dashboard
+              Center(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, '/adminDashboard');
+                  },
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                      Icon(Icons.admin_panel_settings, color: Colors.grey),
+                      SizedBox(width: 6),
+                      Text(
+                        "Admin Dashboard",
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Text(
-                "\$$rate/hr",
-                style: const TextStyle(color: Colors.grey, fontSize: 14),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                available ? "Available" : "Unavailable",
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                  color: available ? Colors.green : Colors.red,
                 ),
-              ),
-              const Spacer(),
-              ElevatedButton(
-                onPressed: available ? onBook : null,
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  minimumSize: const Size(double.infinity, 40),
-                ),
-                child: const Text("Book Now"),
               ),
             ],
           ),
@@ -287,51 +231,89 @@ class _HomePageScreenState extends State<HomePageScreen> {
     );
   }
 
-  // 🔹 Sitters Data
-  List<Map<String, dynamic>> _generateSitters() {
-    return [
-      {
-        "name": "Jane Doe",
-        "rate": 36,
-        "rating": 4.8,
-        "available": true,
-        "img": "https://i.pravatar.cc/150?img=12",
+  // 🔹 Category Button
+  Widget _categoryButton(String text, String value) {
+    final isSelected = selectedCategory == value;
+    return GestureDetector(
+      onTap: () {
+        setState(() => selectedCategory = value);
       },
-      {
-        "name": "John Smith",
-        "rate": 38,
-        "rating": 4.6,
-        "available": false,
-        "img": "https://i.pravatar.cc/150?img=14",
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.black : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.grey.shade300),
+        ),
+        child: Text(
+          text,
+          style: TextStyle(
+            color: isSelected ? Colors.white : Colors.black,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+
+  // 🔹 Sitter Card (Clickable)
+  Widget _sitterCard(BuildContext context, Sitter sitter) {
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      leading: CircleAvatar(
+        radius: 28,
+        backgroundImage: NetworkImage(sitter.img),
+      ),
+      title: Text(
+        sitter.name,
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      ),
+      subtitle: Text(
+        "⭐ ${sitter.rating} (${sitter.reviews} reviews) • ${sitter.distance} miles\n${sitter.specialties.join(", ")}",
+        style: const TextStyle(fontSize: 12, height: 1.4),
+      ),
+      trailing: Text(
+        "\$${sitter.ratePerHour}/hr",
+        style: const TextStyle(
+          color: Colors.green,
+          fontWeight: FontWeight.bold,
+          fontSize: 14,
+        ),
+      ),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => SitterProfilePage(sitter: sitter)),
+        );
       },
-      {
-        "name": "Emma Wilson",
-        "rate": 45,
-        "rating": 4.9,
-        "available": true,
-        "img": "https://i.pravatar.cc/150?img=22",
+    );
+  }
+
+  // 🔹 Quick Action Card
+  Widget _quickAction(
+    BuildContext context, {
+    required IconData icon,
+    required String text,
+    required String route,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, route);
       },
-      {
-        "name": "Liam Brown",
-        "rate": 23,
-        "rating": 4.4,
-        "available": true,
-        "img": "https://i.pravatar.cc/150?img=25",
-      },
-      {
-        "name": "Sophia Davis",
-        "rate": 26,
-        "rating": 4.7,
-        "available": false,
-        "img": "https://i.pravatar.cc/150?img=28",
-      },
-      {
-        "name": "Ethan Miller",
-        "rate": 30,
-        "rating": 4.5,
-        "available": true,
-        "img": "https://i.pravatar.cc/150?img=30",
-      },
-    ];
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey.shade300),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: Colors.black),
+            const SizedBox(width: 8),
+            Text(text),
+          ],
+        ),
+      ),
+    );
   }
 }
