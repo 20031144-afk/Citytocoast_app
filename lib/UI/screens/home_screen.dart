@@ -1,6 +1,6 @@
+import 'package:citytocoastv1/UI/screens/joinourteam.dart';
 import 'package:flutter/material.dart';
 import '../screens/families_screen.dart';
-import '../screens/sitters_screen.dart';
 import 'babysitting_screen.dart';
 import 'book_babysitter_screen.dart';
 import 'book_petsitter_screen.dart';
@@ -145,7 +145,7 @@ class _HeroSection extends StatelessWidget {
                         onTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (_) => const SittersScreen(),
+                              builder: (_) => const JoinOurTeam(),
                             ),
                           );
                         },
@@ -499,9 +499,9 @@ class _JoinOurTeamSection extends StatelessWidget {
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () {
-              Navigator.of(
-                context,
-              ).push(MaterialPageRoute(builder: (_) => const SittersScreen()));
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const PetSittingScreen()),
+              );
             },
             child: const Text('Become a sitter'),
           ),

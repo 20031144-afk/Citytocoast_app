@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'book_petsitter_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PetSittingScreen extends StatelessWidget {
   const PetSittingScreen({super.key});
@@ -33,77 +34,74 @@ class _PetSittingHeroSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    //final size = MediaQuery.of(context).size;
 
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.symmetric(vertical: 24),
-      child: SizedBox(
-        height: size.height * 0.42,
-        child: Row(
-          children: [
-            // LEFT: text
-            Expanded(
-              flex: 5,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Brisbane, Gold Coast & Sunshine Coast',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: const Color.fromARGB(255, 255, 140, 74),
-                        fontWeight: FontWeight.w800,
-                      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // LEFT: text
+          Expanded(
+            flex: 5,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Brisbane, Gold Coast & Sunshine Coast',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: const Color.fromARGB(255, 255, 140, 74),
+                      fontWeight: FontWeight.w800,
                     ),
-                    const SizedBox(height: 6),
-                    Text(
-                      'Pet Sitting Services',
-                      style: Theme.of(context).textTheme.headlineMedium,
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'At City to Coast, we know pets are part of the family too. '
-                      'Whether you’re working late, away for the weekend, or travelling further afield, '
-                      'our pet sitting services make sure your furry friends feel safe, loved and cared for '
-                      'in their own home.',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                    const SizedBox(height: 18),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => const BookPetsitterScreen(),
-                          ),
-                        );
-                      },
-                      child: const Text('Book a Pet Sitter'),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            // RIGHT: hero image
-            Expanded(
-              flex: 5,
-              child: Padding(
-                padding: const EdgeInsetsDirectional.only(end: 16),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(40),
-                  child: Image.asset(
-                    'assets/images/img5.jpg',
-                    height: double.infinity,
-                    fit: BoxFit.cover,
                   ),
+                  const SizedBox(height: 6),
+                  Text(
+                    'Pet Sitting Services',
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'At City to Coast, we know pets are part of the family too. '
+                    'Whether you’re working late, away for the weekend, or travelling further afield, '
+                    'our pet sitting services make sure your furry friends feel safe, loved and cared for '
+                    'in their own home.',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 18),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const BookPetsitterScreen(),
+                        ),
+                      );
+                    },
+                    child: const Text('Book a Pet Sitter'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // RIGHT: hero image
+          Expanded(
+            flex: 5,
+            child: Padding(
+              padding: const EdgeInsetsDirectional.only(end: 16),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(40),
+                child: Image.asset(
+                  'assets/icons/img5.jpg',
+                  // height: double.infinity,
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -206,11 +204,11 @@ class _WhatIsPetSittingSection extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(32),
+                  borderRadius: BorderRadius.circular(64),
                   child: Image.asset(
-                    'assets/images/img6.jpg',
+                    'assets/icons/img6.jpg',
                     fit: BoxFit.cover,
-                    height: 220,
+                    height: 320,
                   ),
                 ),
               ),
@@ -224,7 +222,7 @@ class _WhatIsPetSittingSection extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(32),
                   child: Image.asset(
-                    'assets/images/img7.jpg',
+                    'assets/icons/img7.jpg',
                     fit: BoxFit.cover,
                     height: 220,
                   ),
@@ -648,19 +646,25 @@ class _PetAreasWeCoverSection extends StatelessWidget {
               _AreaMapCard(
                 title: 'Brisbane',
                 description: 'Servicing from Caboolture to Beenleigh',
-                imagePath: 'assets/images/map_brisbane.png',
+                imagePath: 'assets/icons/mapbrisbane.png',
+                mapsUrl:
+                    'https://www.google.com/maps/place/Brisbane+QLD/@-27.382143,152.993196,9z/data=!4m6!3m5!1s0x6b91579aac93d233:0x402a35af3deaf40!8m2!3d-27.4704528!4d153.0260341!16zL20vMDFiOGpq?hl=en',
               ),
               SizedBox(height: 12),
               _AreaMapCard(
                 title: 'Gold Coast',
                 description: 'Servicing from Stapylton to Coolangatta',
-                imagePath: 'assets/images/map_goldcoast.png',
+                imagePath: 'assets/icons/mapgoldcoast.png',
+                mapsUrl:
+                    'https://www.google.com/maps/place/Gold+Coast+QLD/@-27.954222,153.369361,10z/data=!4m6!3m5!1s0x6b911a472b5d60b7:0x302a35af3deaf70!8m2!3d-27.9769248!4d153.380936!16zL20vMGc0Zzc?hl=en',
               ),
               SizedBox(height: 12),
               _AreaMapCard(
                 title: 'Sunshine Coast',
                 description: 'Servicing from Pelican Waters to Noosa Nth Shore',
-                imagePath: 'assets/images/map_sunshine.png',
+                imagePath: 'assets/icons/mapsunshinecoast.png',
+                mapsUrl:
+                    'https://www.google.com/maps/place/Sunshine+Coast+QLD/@-26.6553091,152.7558644,10z/data=!4m6!3m5!1s0x6b937fb66d7d48ed:0x302a35af3deaf50!8m2!3d-26.6527751!4d153.0895855!16zL20vMDJ2bWx3?hl=en&entry=ttu&g_ep=EgoyMDI1MTExNy4wIKXMDSoASAFQAw%3D%3D',
               ),
             ],
           ),
@@ -675,44 +679,60 @@ class _AreaMapCard extends StatelessWidget {
   final String description;
   final String imagePath;
 
+  final String mapsUrl;
+
   const _AreaMapCard({
     required this.title,
     required this.description,
     required this.imagePath,
+    required this.mapsUrl,
   });
+
+  Future<void> _openMaps() async {
+    final uri = Uri.parse(mapsUrl);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).textTheme;
 
-    return Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Static map image (you can replace with GoogleMap later)
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-            child: Image.asset(
-              imagePath,
-              height: 160,
-              width: double.infinity,
-              fit: BoxFit.cover,
+    return InkWell(
+      borderRadius: BorderRadius.circular(24),
+      onTap: _openMaps,
+      child: Card(
+        elevation: 3,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Static map image (you can replace with GoogleMap later)
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(24),
+              ),
+              child: Image.asset(
+                imagePath,
+                height: 160,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: theme.titleMedium),
-                const SizedBox(height: 4),
-                Text(description, style: theme.bodySmall),
-              ],
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: theme.titleMedium),
+                  const SizedBox(height: 4),
+                  Text(description, style: theme.bodySmall),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

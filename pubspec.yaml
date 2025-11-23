@@ -76,6 +76,9 @@ flutter:
     - assets/icons/img7.jpg
     - assets/icons/img8.jpg
     - assets/icons/img9.jpg
+    - assets/icons/mapbrisbane.png
+    - assets/icons/mapgoldcoast.png
+    - assets/icons/mapsunshinecoast.png
 
 
   # To add assets to your application, add an assets section, like this:
