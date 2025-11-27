@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        
+        {
+            "name": "Citytocoast_app-citytocoastv1-version (Flutter)",
+            "program": "lib/main.dart",
+            "request": "launch",
+            "type": "dart"
+        }
+    ]
+}

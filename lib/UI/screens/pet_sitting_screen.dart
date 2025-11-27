@@ -39,7 +39,7 @@ class _PetSittingHeroSection extends StatelessWidget {
       color: Colors.white,
       padding: const EdgeInsets.symmetric(vertical: 24),
       child: SizedBox(
-        height: size.height * 0.42,
+        
         child: Row(
           children: [
             // LEFT: text
@@ -72,16 +72,19 @@ class _PetSittingHeroSection extends StatelessWidget {
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     const SizedBox(height: 18),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => const BookPetsitterScreen(),
-                          ),
-                        );
-                      },
-                      child: const Text('Book a Pet Sitter'),
-                    ),
+                    SizedBox(
+  height: 50,
+  child: ElevatedButton(
+    onPressed: () {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => const BookPetsitterScreen(),
+        ),
+      );
+    },
+    child: const Text('Book a Pet Sitter'),
+  ),
+)
                   ],
                 ),
               ),
@@ -96,7 +99,7 @@ class _PetSittingHeroSection extends StatelessWidget {
                   borderRadius: BorderRadius.circular(40),
                   child: Image.asset(
                     'assets/icons/img5.jpg',
-                    height: double.infinity,
+                    height: 260,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -648,19 +651,19 @@ class _PetAreasWeCoverSection extends StatelessWidget {
               _AreaMapCard(
                 title: 'Brisbane',
                 description: 'Servicing from Caboolture to Beenleigh',
-                imagePath: 'assets/icons/map_brisbane.png',
+                imagePath: 'assets/icons/mapbrisbane.png',
               ),
               SizedBox(height: 12),
               _AreaMapCard(
                 title: 'Gold Coast',
                 description: 'Servicing from Stapylton to Coolangatta',
-                imagePath: 'assets/icons/map_goldcoast.png',
+                imagePath: 'assets/icons/mapgoldcoast.png',
               ),
               SizedBox(height: 12),
               _AreaMapCard(
                 title: 'Sunshine Coast',
                 description: 'Servicing from Pelican Waters to Noosa Nth Shore',
-                imagePath: 'assets/icons/map_sunshine.png',
+                imagePath: 'assets/icons/mapsunshinecoast.png',
               ),
             ],
           ),
