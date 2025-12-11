@@ -5,7 +5,7 @@ class FirestoreService {
 
   // 🔹 Create user document
   Future<void> createUser(String uid, Map<String, dynamic> data) async {
-    await _db.collection('users').doc(uid).set(data);
+    await _db.collection('signUp').doc(uid).set(data);
   }
 
   // 🔹 Get user data
@@ -34,4 +34,29 @@ class FirestoreService {
               .where('role', isEqualTo: 'sitter')
               .snapshots();
   }
+
+  // 🔹 Get all sitters from sitters collection (ONE-TIME)
+Future<List<Map<String, dynamic>>> fetchSitters() async {
+  final snapshot = await _db.collection('sitters').get();
+
+  return snapshot.docs.map((doc) {
+    return {
+      "id": doc.id,
+      ...doc.data(),
+    };
+  }).toList();
+}
+
+// 🔹 Stream real-time sitter updates
+Stream<List<Map<String, dynamic>>> sittersCollectionStream() {
+  return _db.collection('sitters').snapshots().map((snapshot) {
+    return snapshot.docs.map((doc) {
+      return {
+        "id": doc.id,
+        ...doc.data(),
+      };
+    }).toList();
+  });
+}
+
 }

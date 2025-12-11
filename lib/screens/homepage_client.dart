@@ -1,3 +1,4 @@
+import 'package:citytocoast_app/services/firestore_service.dart';
 import 'package:flutter/material.dart';
 import 'sitter.dart';
 import 'sitter_profile_page.dart';
@@ -15,15 +16,62 @@ class _HomePageScreenState extends State<HomePageScreen> {
   String selectedCategory = "both";
   String searchQuery = "";
 
+  // ✅ Firestore Service
+  final FirestoreService _firestoreService = FirestoreService();
+
+  // ✅ Sitters coming from Firestore
+  List<SitterApiModel> firestoreSitters = [];
+
+  // ✅ Load sitters when screen opens
+  @override
+  void initState() {
+    super.initState();
+    _loadFirestoreSitters();
+  }
+
+  // ✅ API Call Function (NO UI CHANGES)
+  Future<void> _loadFirestoreSitters() async {
+    final data = await _firestoreService.fetchSitters();
+
+    setState(() {
+     firestoreSitters = data.map((item) => SitterApiModel(
+      id: item["id"] ?? "",
+      name: item["name"] ?? "",
+      bio: item["bio"] ?? "",
+      experience: item["experience"] ?? "",
+      contactNumber: item["contactNumber"] ?? "",
+      ratePerHour: double.tryParse(item["ratePerHour"].toString()) ?? 0,
+      milesAway: double.tryParse(item["milesAway"].toString()) ?? 0,
+      distance: item["distance"] ?? 0,
+      lat: item["lat"] ?? 0,
+      long: item["long"] ?? 0,
+      rating: (item["reviews"] != null && item["reviews"].length > 0)
+          ? item["reviews"][0]["rating"] ?? 0
+          : 0,
+      availability: item["availability"] ?? true,
+      servicesProvided: List<String>.from(item["servicesProvided"] ?? []),
+      specialties: List<String>.from(item["specialties"] ?? []),
+      availabilitySlots: (item["availability"] as List<dynamic>? ?? [])
+          .map((e) => AvailabilitySlot.fromMap(e))
+          .toList(),
+      images: List<String>.from(item["images"] ?? []),
+      profileImage: item["profileImage"] ?? "",
+      reviews: (item["reviews"] as List<dynamic>? ?? [])
+          .map((e) => ReviewModel.fromMap(e))
+          .toList(),
+    )).toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    // 🔹 Filter sitters by category + search query
-    final filteredSitters = sitterList.where((sitter) {
+    // 🔹 USE FIRESTORE DATA instead of local sitterList
+    final filteredSitters = firestoreSitters.where((sitter) {
       final matchesCategory =
           selectedCategory == "both" || sitter.tags.contains(selectedCategory);
       final matchesSearch = sitter.name.toLowerCase().contains(
-        searchQuery.toLowerCase(),
-      );
+            searchQuery.toLowerCase(),
+          );
       return matchesCategory && matchesSearch;
     }).toList();
 
@@ -34,7 +82,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 🔹 Gradient Header
+              // 🔹 Gradient Header (NO CHANGES)
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: const BoxDecoration(
@@ -47,7 +95,6 @@ class _HomePageScreenState extends State<HomePageScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Header row
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -76,8 +123,6 @@ class _HomePageScreenState extends State<HomePageScreen> {
                       style: TextStyle(color: Colors.white70),
                     ),
                     const SizedBox(height: 16),
-
-                    // Search bar
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: BoxDecoration(
@@ -101,7 +146,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
 
               const SizedBox(height: 16),
 
-              // 🔹 Category Toggle
+              // 🔹 Category Toggle (NO CHANGES)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
@@ -116,7 +161,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
 
               const SizedBox(height: 20),
 
-              // 🔹 Featured Sitters Section
+              // 🔹 Featured Sitters (NO UI changes)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
@@ -149,12 +194,12 @@ class _HomePageScreenState extends State<HomePageScreen> {
               ),
               const SizedBox(height: 10),
 
-              // 🔹 Sitters List (show top 3 only)
+              // 🔹 Sitters List (NO UI change)
               ...filteredSitters.take(3).map((s) => _sitterCard(context, s)),
 
               const SizedBox(height: 20),
 
-              // 🔹 Quick Actions Section
+              // 🔹 Quick Actions (NO CHANGES)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: const Text(
@@ -201,8 +246,10 @@ class _HomePageScreenState extends State<HomePageScreen> {
                   ],
                 ),
               ),
+
               const SizedBox(height: 20),
-              // Admin Dashboard
+
+              // 🔹 Admin Dashboard
               Center(
                 child: GestureDetector(
                   onTap: () {
@@ -256,7 +303,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
     );
   }
 
-  // 🔹 Sitter Card (Clickable)
+  // 🔹 Sitter Card
   Widget _sitterCard(BuildContext context, Sitter sitter) {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

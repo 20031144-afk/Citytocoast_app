@@ -1,7 +1,9 @@
+import 'package:citytocoast_app/services/sitter_upload_services.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+import 'package:citytocoast_app/services/auth_service.dart';
 import 'package:citytocoast_app/services/firestore_service.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -17,9 +19,10 @@ class _AuthScreenState extends State<AuthScreen> {
   bool _obscurePassword = true;
   bool _obscureConfirm = true;
   bool _isAgreed = false;
+  bool _isLoading = false;
 
-  // Firebase
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  // Services
+  final AuthService _authService = AuthService();
   final FirestoreService _firestoreService = FirestoreService();
 
   // Login controllers
@@ -38,37 +41,51 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Tabs
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+      body: Stack(
+        children: [
+          SafeArea(
+            child: Column(
               children: [
-                _tabButton("Log in", showLogin, () {
-                  setState(() => showLogin = true);
-                }),
-                const SizedBox(width: 40),
-                _tabButton("Sign up", !showLogin, () {
-                  setState(() => showLogin = false);
-                }),
+                // TABS
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _tabButton("Log in", showLogin, () {
+                      setState(() => showLogin = true);
+                    }),
+                    const SizedBox(width: 40),
+                    _tabButton("Sign up", !showLogin, () {
+                      setState(() => showLogin = false);
+                    }),
+                  ],
+                ),
+                const SizedBox(height: 20),
+
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child:
+                        showLogin ? _buildLoginForm() : _buildSignupForm(),
+                  ),
+                ),
               ],
             ),
-            const SizedBox(height: 20),
+          ),
 
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: showLogin ? _buildLoginForm() : _buildSignupForm(),
+          // LOADING OVERLAY
+          if (_isLoading)
+            Container(
+              color: Colors.black.withOpacity(0.3),
+              child: const Center(
+                child: CircularProgressIndicator(),
               ),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }
 
-  // Tab
+  // ---------------- TABS ----------------
   Widget _tabButton(String text, bool active, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
@@ -93,33 +110,45 @@ class _AuthScreenState extends State<AuthScreen> {
     );
   }
 
-  // ---------------- LOGIN FORM ----------------
+  // ------------------------------------------------------------
+  // LOGIN FORM
+  // ------------------------------------------------------------
+
   Widget _buildLoginForm() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text("Your Email", style: TextStyle(fontWeight: FontWeight.w500)),
+        const Text("Your Email",
+            style: TextStyle(fontWeight: FontWeight.w500)),
         const SizedBox(height: 16),
+
         TextField(
           controller: _loginEmail,
           decoration: InputDecoration(
             hintText: "Enter your email",
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            border:
+                OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
         ),
+
+        const SizedBox(height: 16),
+        const Text("Password",
+            style: TextStyle(fontWeight: FontWeight.w500)),
         const SizedBox(height: 16),
 
-        const Text("Password", style: TextStyle(fontWeight: FontWeight.w500)),
-        const SizedBox(height: 16),
         TextField(
           controller: _loginPassword,
           obscureText: _obscurePassword,
           decoration: InputDecoration(
             hintText: "Enter your password",
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            border:
+                OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             suffixIcon: IconButton(
-              icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
-              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+              icon: Icon(_obscurePassword
+                  ? Icons.visibility
+                  : Icons.visibility_off),
+              onPressed: () =>
+                  setState(() => _obscurePassword = !_obscurePassword),
             ),
           ),
         ),
@@ -139,57 +168,56 @@ class _AuthScreenState extends State<AuthScreen> {
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF5A78FF),
             padding: const EdgeInsets.symmetric(vertical: 14),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12)),
           ),
-          child: const Text("Log In", style: TextStyle(color: Colors.white)),
+          child:
+              const Text("Log In", style: TextStyle(color: Colors.white)),
         ),
 
         const SizedBox(height: 25),
-
-        // OLD UI DIVIDER + SOCIAL BUTTONS
         _dividerWithText("Or continue with"),
         const SizedBox(height: 20),
 
         Column(
           children: [
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: () {},
-                icon: const FaIcon(FontAwesomeIcons.apple, color: Colors.black),
-                label: const Text("Continue with Apple"),
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  side: const BorderSide(color: Colors.grey),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-              ),
-            ),
+            _socialButton("Continue with Apple",
+                const FaIcon(FontAwesomeIcons.apple, color: Colors.black)),
             const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: () {},
-                icon: const FaIcon(FontAwesomeIcons.google, color: Colors.red),
-                label: const Text("Continue with Google"),
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  side: const BorderSide(color: Colors.grey),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-              ),
-            ),
+            _socialButton("Continue with Google",
+                const FaIcon(FontAwesomeIcons.google, color: Colors.red)),
           ],
         ),
       ],
     );
   }
 
-  // ---------------- SIGNUP FORM ----------------
+  Widget _socialButton(String text, Widget icon) {
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton.icon(
+        onPressed: () {},
+        icon: icon,
+        label: Text(text),
+        style: OutlinedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          side: const BorderSide(color: Colors.grey),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12)),
+        ),
+      ),
+    );
+  }
+
+  // ------------------------------------------------------------
+  // SIGNUP FORM
+  // ------------------------------------------------------------
+
   Widget _buildSignupForm() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        // Role Selection
         Row(
           children: [
             Expanded(
@@ -197,7 +225,8 @@ class _AuthScreenState extends State<AuthScreen> {
                 title: const Text("Parent/Pet Owner"),
                 value: "parent",
                 groupValue: role,
-                onChanged: (val) => setState(() => role = val.toString()),
+                onChanged: (val) =>
+                    setState(() => role = val.toString()),
               ),
             ),
             Expanded(
@@ -205,7 +234,8 @@ class _AuthScreenState extends State<AuthScreen> {
                 title: const Text("Sitter"),
                 value: "sitter",
                 groupValue: role,
-                onChanged: (val) => setState(() => role = val.toString()),
+                onChanged: (val) =>
+                    setState(() => role = val.toString()),
               ),
             ),
           ],
@@ -218,7 +248,8 @@ class _AuthScreenState extends State<AuthScreen> {
                 controller: _firstName,
                 decoration: InputDecoration(
                   labelText: "First Name",
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12)),
                 ),
               ),
             ),
@@ -228,61 +259,73 @@ class _AuthScreenState extends State<AuthScreen> {
                 controller: _lastName,
                 decoration: InputDecoration(
                   labelText: "Last Name",
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12)),
                 ),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 16),
 
+        const SizedBox(height: 16),
         TextField(
           controller: _phone,
           decoration: InputDecoration(
             labelText: "Phone Number",
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            border:
+                OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
         ),
-        const SizedBox(height: 16),
 
+        const SizedBox(height: 16),
         TextField(
           controller: _signupEmail,
           decoration: InputDecoration(
             labelText: "Your Email",
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            border:
+                OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
         ),
-        const SizedBox(height: 16),
 
+        const SizedBox(height: 16),
         TextField(
           controller: _signupPassword,
           obscureText: _obscurePassword,
           decoration: InputDecoration(
             labelText: "Password",
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            border:
+                OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             suffixIcon: IconButton(
-              icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
-              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+              icon: Icon(_obscurePassword
+                  ? Icons.visibility
+                  : Icons.visibility_off),
+              onPressed: () =>
+                  setState(() => _obscurePassword = !_obscurePassword),
             ),
           ),
         ),
-        const SizedBox(height: 16),
 
+        const SizedBox(height: 16),
         TextField(
           controller: _signupConfirm,
           obscureText: _obscureConfirm,
           decoration: InputDecoration(
             labelText: "Confirm Password",
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            border:
+                OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             suffixIcon: IconButton(
-              icon: Icon(_obscureConfirm ? Icons.visibility : Icons.visibility_off),
-              onPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),
+              icon: Icon(_obscureConfirm
+                  ? Icons.visibility
+                  : Icons.visibility_off),
+              onPressed: () =>
+                  setState(() => _obscureConfirm = !_obscureConfirm),
             ),
           ),
         ),
 
         const SizedBox(height: 16),
 
+        // Terms Checkbox
         Row(
           children: [
             Checkbox(
@@ -292,9 +335,13 @@ class _AuthScreenState extends State<AuthScreen> {
             const Expanded(
               child: Text.rich(
                 TextSpan(text: "I agree to the ", children: [
-                  TextSpan(text: "Terms of Service", style: TextStyle(color: Colors.blue)),
+                  TextSpan(
+                      text: "Terms of Service",
+                      style: TextStyle(color: Colors.blue)),
                   TextSpan(text: " and "),
-                  TextSpan(text: "Privacy Policy", style: TextStyle(color: Colors.blue)),
+                  TextSpan(
+                      text: "Privacy Policy",
+                      style: TextStyle(color: Colors.blue)),
                 ]),
               ),
             ),
@@ -307,9 +354,11 @@ class _AuthScreenState extends State<AuthScreen> {
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF5A78FF),
             padding: const EdgeInsets.symmetric(vertical: 14),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12)),
           ),
-          child: const Text("Sign Up", style: TextStyle(color: Colors.white)),
+          child:
+              const Text("Sign Up", style: TextStyle(color: Colors.white)),
         ),
       ],
     );
@@ -321,64 +370,102 @@ class _AuthScreenState extends State<AuthScreen> {
         const Expanded(child: Divider()),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Text(text, style: const TextStyle(color: Colors.grey)),
+          child:
+              Text(text, style: const TextStyle(color: Colors.grey)),
         ),
         const Expanded(child: Divider()),
       ],
     );
   }
 
-  // ---------------- FIREBASE LOGIC ----------------
-
-  Future<void> _signupUser() async {
-    if (_signupPassword.text != _signupConfirm.text) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Passwords do not match")),
-      );
-      return;
-    }
-
-    try {
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-        email: _signupEmail.text.trim(),
-        password: _signupPassword.text.trim(),
-      );
-
-      await _firestoreService.createUser(userCredential.user!.uid, {
-        "firstName": _firstName.text.trim(),
-        "lastName": _lastName.text.trim(),
-        "phone": _phone.text.trim(),
-        "email": _signupEmail.text.trim(),
-        "role": role,
-        "createdAt": FieldValue.serverTimestamp(),
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Signup Successful!")),
-      );
-
-      Navigator.pushReplacementNamed(context, "/clientHome");
-
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Signup Failed: $e")),
-      );
-    }
-  }
+  // ------------------------------------------------------------
+  // LOGIN FUNCTION
+  // ------------------------------------------------------------
 
   Future<void> _loginUser() async {
+    setState(() => _isLoading = true);
+
     try {
-      await _auth.signInWithEmailAndPassword(
-        email: _loginEmail.text.trim(),
-        password: _loginPassword.text.trim(),
+      await _authService.login(
+        _loginEmail.text,
+        _loginPassword.text,
       );
 
       Navigator.pushReplacementNamed(context, '/clientHome');
-
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Login failed: $e")),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Login failed: $e")));
+    } finally {
+      setState(() => _isLoading = false);
     }
   }
+
+  Future<void> _uploadSitter() async {
+  try {
+    await SitterUploadService().uploadSittersFromJson();
+    print("✅ Sitters uploaded successfully");
+  } catch (e) {
+    print("❌ Error uploading sitters: $e");
+  }
+}
+
+  // ------------------------------------------------------------
+  // SIGNUP FUNCTION
+  // ------------------------------------------------------------
+
+  Future<void> _signupUser() async {
+  if (_signupPassword.text != _signupConfirm.text) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Passwords do not match")),
+    );
+    return;
+  }
+
+  if (!_isAgreed) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("You must agree to the Terms & Privacy Policy"),
+      ),
+    );
+    return;
+  }
+
+  setState(() => _isLoading = true);
+
+  try {
+    final userCredential = await _authService.signup(
+      _signupEmail.text.trim(),
+      _signupPassword.text.trim(),
+    );
+
+    final String uid = userCredential.user!.uid;
+
+    // Save user to Firestore with full required fields
+    await _firestoreService.createUser(
+      uid,
+      {
+        "firstName": _firstName.text.trim(),
+        "lastName": _lastName.text.trim(),
+        "email": _signupEmail.text.trim(),
+        "phoneNumber": _phone.text.trim(),
+        "role": role,                     // Make sure 'role' is defined
+        "termsAccepted": _isAgreed,       // store as boolean
+        "createdAt": FieldValue.serverTimestamp(),
+        "updatedAt": FieldValue.serverTimestamp(),
+      },
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Signup Successful!")),
+    );
+
+    setState(() => showLogin = true);
+  } catch (e) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text("Signup Failed: $e")));
+  } finally {
+    setState(() => _isLoading = false);
+  }
+}
+
 }
