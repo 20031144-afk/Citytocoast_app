@@ -20,7 +20,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
   final FirestoreService _firestoreService = FirestoreService();
 
   // ✅ Sitters coming from Firestore
-  List<SitterApiModel> firestoreSitters = [];
+  List<Sitter> firestoreSitters = [];
 
   // ✅ Load sitters when screen opens
   @override
@@ -34,32 +34,55 @@ class _HomePageScreenState extends State<HomePageScreen> {
     final data = await _firestoreService.fetchSitters();
 
     setState(() {
-     firestoreSitters = data.map((item) => SitterApiModel(
-      id: item["id"] ?? "",
-      name: item["name"] ?? "",
-      bio: item["bio"] ?? "",
-      experience: item["experience"] ?? "",
-      contactNumber: item["contactNumber"] ?? "",
-      ratePerHour: double.tryParse(item["ratePerHour"].toString()) ?? 0,
-      milesAway: double.tryParse(item["milesAway"].toString()) ?? 0,
-      distance: item["distance"] ?? 0,
-      lat: item["lat"] ?? 0,
-      long: item["long"] ?? 0,
-      rating: (item["reviews"] != null && item["reviews"].length > 0)
-          ? item["reviews"][0]["rating"] ?? 0
-          : 0,
-      availability: item["availability"] ?? true,
-      servicesProvided: List<String>.from(item["servicesProvided"] ?? []),
-      specialties: List<String>.from(item["specialties"] ?? []),
-      availabilitySlots: (item["availability"] as List<dynamic>? ?? [])
-          .map((e) => AvailabilitySlot.fromMap(e))
-          .toList(),
-      images: List<String>.from(item["images"] ?? []),
-      profileImage: item["profileImage"] ?? "",
-      reviews: (item["reviews"] as List<dynamic>? ?? [])
-          .map((e) => ReviewModel.fromMap(e))
-          .toList(),
-    )).toList();
+      firestoreSitters = data.map((item) {
+        final reviews = (item["reviews"] as List<dynamic>? ?? []);
+        final ratingFromField =
+            double.tryParse(item["rating"]?.toString() ?? "");
+        final ratingFromReviews = reviews.isNotEmpty
+            ? double.tryParse(reviews.first["rating"]?.toString() ?? "")
+            : null;
+
+        final availabilitySlots = (item["availabilitySlots"] as List<dynamic>? ??
+                [])
+            .map((slot) {
+          final date = slot["date"]?.toString() ?? "";
+          final slotList = List<String>.from(slot["slots"] ?? []);
+          if (date.isEmpty && slotList.isEmpty) return "";
+          return slotList.isNotEmpty
+              ? "$date: ${slotList.join(", ")}"
+              : date;
+        }).where((e) => e.isNotEmpty).toList();
+
+        final fallbackImage = (item["images"] as List<dynamic>? ?? []);
+
+        return Sitter(
+          name: item["name"]?.toString() ?? "",
+          rating: ratingFromField ?? ratingFromReviews ?? 0,
+          reviews: reviews.length,
+          ratePerHour: double.tryParse(
+                item["ratePerHour"]?.toString() ??
+                    item["rate"]?.toString() ??
+                    "0",
+              ) ??
+              0,
+          bio: item["bio"]?.toString() ?? "",
+          specialties: List<String>.from(
+            item["specialties"] ?? item["servicesProvided"] ?? [],
+          ),
+          availability: availabilitySlots,
+          distance: double.tryParse(
+                item["milesAway"]?.toString() ??
+                    item["distance"]?.toString() ??
+                    "0",
+              ) ??
+              0,
+          tags: List<String>.from(item["servicesProvided"] ?? []),
+          img: item["profileImage"]?.toString() ??
+              (fallbackImage.isNotEmpty
+                  ? fallbackImage.first.toString()
+                  : ""),
+        );
+      }).toList();
     });
   }
 

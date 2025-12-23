@@ -40,7 +40,6 @@ class Sitter {
   }
 }
 
-
 class SitterApiModel {
   final String id;
   final String name;
@@ -109,6 +108,8 @@ class SitterApiModel {
           .toList(),
     );
   }
+
+  get tags => null;
 }
 
 // ✅ Availability model
@@ -116,10 +117,7 @@ class AvailabilitySlot {
   final String date;
   final List<String> slots;
 
-  AvailabilitySlot({
-    required this.date,
-    required this.slots,
-  });
+  AvailabilitySlot({required this.date, required this.slots});
 
   factory AvailabilitySlot.fromMap(Map<String, dynamic> data) {
     return AvailabilitySlot(
