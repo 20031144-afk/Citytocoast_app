@@ -1,24 +1,74 @@
-# citytocoast_app1
+# 🌊 CityToCoast App – Baby & Pet Sitting Platform
 
-A new Flutter project.
+CityToCoast is a Flutter-powered mobile app designed to connect families across the Sunshine Coast, Gold Coast, and Brisbane with trusted babysitters and pet sitters.  
+Built with ❤️ using Flutter, Firebase, and Stripe.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## 📱 Features
 
-A few resources to get you started if this is your first Flutter project:
+- 👶 Browse & book trusted babysitters and childcare helpers  
+- 🐶 Book pet sitters for cats, dogs, and more  
+- ⭐ Sitter profiles with images, reviews & ratings  
+- 📅 Real-time availability (calendar slots)  
+- 💬 Messaging system (upcoming)
+- 💳 Secure payments powered by Stripe  
+- 🔐 Firebase Authentication & Firestore  
+- 🌐 Fully cross-platform (Android/iOS/Web ready)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 🚀 Getting Started
 
-## Stripe setup
-
-Run the app with your local publishable key:
-
+### 1️⃣ Clone the Repository
 ```bash
-flutter run --dart-define-from-file=dart_defines.json
-```
+git clone https://github.com/20031144-afk/Citytocoast_app.git
+cd Citytocoast_app
+
+###Install Flutter Dependencies
+flutter pub get
+
+🔧 Environment Configuration (Required)
+
+This project does not commit secrets.
+Every developer must create their own .env.
+
+Create .env in project root:
+# Stripe Keys
+STRIPE_SECRET_KEY=your_stripe_secret_key
+STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
+
+🛠 Troubleshooting
+
+❌ App won’t build
+
+Run flutter pub get
+
+Make sure you have Firebase config files
+
+❌ Payment errors
+
+Check .env exists
+
+Confirm Stripe test keys added
+
+❌ Firestore permission issues
+
+Verify rules in Firebase console
+
+❌ Functions failing
+
+cd functions
+npm install
+firebase functions:config:get
+
+
+---
+
+### Bonus Files You Should Add
+
+#### `.env.example`
+```env
+STRIPE_SECRET_KEY=
+STRIPE_PUBLISHABLE_KEY=
+
