@@ -1,0 +1,290 @@
+[
+    {
+    "user": "Alice",
+    "img": "https://i.pravatar.cc/150?img=1",
+    "text": "Jane was wonderful with my baby 👶. She played games, read bedtime stories, and kept everything tidy. Will definitely book again!",
+    "date": "2025-08-15T19:45:00"
+    },
+    {
+    "user": "Bob",
+    "img": "https://i.pravatar.cc/150?img=2",
+    "text": "John was friendly with my dog 🐶 but left 20 minutes earlier than agreed. Neutral experience.",
+    "date": "2025-08-16T10:30:00"
+    },
+    {
+        "user": "Clara",
+        "img": "https://i.pravatar.cc/150?img=3",
+        "text": "The sitter arrived late ❌ and didn’t follow my feeding instructions. Very disappointing.",
+        "date": "2025-08-16T21:10:00"
+    },
+    {
+        "user": "David",
+        "img": "https://i.pravatar.cc/150?img=4",
+        "text": "Amazing experience 🌟! She kept both of my kids busy with creative activities and sent me regular updates.",
+        "date": "2025-08-17T18:00:00"
+    },
+    {
+        "user": "Ella",
+        "img": "https://i.pravatar.cc/150?img=5",
+        "text": "Good sitter, but a little shy with my children. They were safe but not super engaged. ⚖️",
+        "date": "2025-08-18T09:20:00"
+    },
+    {
+        "user": "Frank",
+        "img": "https://i.pravatar.cc/150?img=6",
+        "text": "Not happy ❌. The sitter was on the phone a lot and ignored my instructions.",
+        "date": "2025-08-18T19:30:00"
+    },
+    {
+        "user": "Grace",
+        "img": "https://i.pravatar.cc/150?img=7",
+        "text": "She was perfect 💖. My toddler instantly trusted her. She even cleaned up the toys before leaving.",
+        "date": "2025-08-19T20:00:00"
+    },
+    {
+        "user": "Hannah",
+        "img": "https://i.pravatar.cc/150?img=8",
+        "text": "The sitter was fine. Puppy was safe, but I wish she walked him longer 🐕. Neutral overall.",
+        "date": "2025-08-20T08:45:00"
+    },
+    {
+        "user": "Isaac",
+        "img": "https://i.pravatar.cc/150?img=9",
+        "text": "My sitter canceled last minute ❌. Support helped, but it ruined my evening plans.",
+        "date": "2025-08-20T19:00:00"
+    },
+    {
+        "user": "Julia",
+        "img": "https://i.pravatar.cc/150?img=10",
+        "text": "Lovely sitter 💕! She even helped my son with homework while keeping my daughter entertained.",
+        "date": "2025-08-21T17:30:00"
+    },
+    {
+        "user": "Kevin",
+        "img": "https://i.pravatar.cc/150?img=11",
+        "text": "The sitter was polite, but didn’t send me updates during the evening. ⚖️ I prefer more communication.",
+        "date": "2025-08-21T22:10:00"
+    },
+    {
+        "user": "Laura",
+        "img": "https://i.pravatar.cc/150?img=12",
+        "text": "Fantastic sitter 🙌. She calmed my crying baby in minutes and handled bedtime like a pro.",
+        "date": "2025-08-22T19:45:00"
+    },
+    {
+        "user": "Mike",
+        "img": "https://i.pravatar.cc/150?img=13",
+        "text": "Not impressed ❌. The sitter didn’t pay attention and let my child watch TV all evening.",
+        "date": "2025-08-22T21:00:00"
+    },
+    {
+        "user": "Nora",
+        "img": "https://i.pravatar.cc/150?img=14",
+        "text": "Booking was easy, payment was smooth, and the sitter was professional. ⭐⭐⭐⭐⭐",
+        "date": "2025-08-23T18:20:00"
+    },
+    {
+        "user": "Oliver",
+        "img": "https://i.pravatar.cc/150?img=15",
+        "text": "The sitter did her job, but kids weren’t very excited. ⚖️ Safe but average.",
+        "date": "2025-08-24T09:30:00"
+    },
+    {
+        "user": "Paula",
+        "img": "https://i.pravatar.cc/150?img=16",
+        "text": "Amazing sitter 🌟. Managed three kids with patience, cooked snacks, and left the house tidy.",
+        "date": "2025-08-24T20:00:00"
+    },
+    {
+        "user": "Quinn",
+        "img": "https://i.pravatar.cc/150?img=17",
+        "text": "The sitter was okay but lacked energy. ⚖️ My kids were bored.",
+        "date": "2025-08-25T10:00:00"
+    },
+    {
+        "user": "Ryan",
+        "img": "https://i.pravatar.cc/150?img=18",
+        "text": "Excellent experience 🙌! She even tidied up the kitchen after putting the kids to bed.",
+        "date": "2025-08-25T19:15:00"
+    },
+    {
+        "user": "Sophia",
+        "img": "https://i.pravatar.cc/150?img=19",
+        "text": "Pretty average ⚖️. Puppy was fine but didn’t get enough playtime.",
+        "date": "2025-08-26T08:30:00"
+    },
+    {
+        "user": "Tom",
+        "img": "https://i.pravatar.cc/150?img=20",
+        "text": "Late by 20 minutes ❌ and didn’t apologize. Not booking again.",
+        "date": "2025-08-26T20:00:00"
+    },
+    {
+        "user": "Uma",
+        "img": "https://i.pravatar.cc/150?img=21",
+        "text": "Fantastic sitter ✨. She left a note about the evening, which I really appreciated.",
+        "date": "2025-08-27T19:45:00"
+    },
+    {
+        "user": "Victor",
+        "img": "https://i.pravatar.cc/150?img=22",
+        "text": "Decent sitter ⚖️. Kids were safe, but sitter was a bit quiet.",
+        "date": "2025-08-27T21:00:00"
+    },
+    {
+        "user": "Wendy",
+        "img": "https://i.pravatar.cc/150?img=23",
+        "text": "She was amazing 💖. My kids loved her and can’t wait to see her again.",
+        "date": "2025-08-28T17:30:00"
+    },
+    {
+        "user": "Xavier",
+        "img": "https://i.pravatar.cc/150?img=24",
+        "text": "Not satisfied ❌. Sitter ignored instructions and was more focused on her phone.",
+        "date": "2025-08-28T21:00:00"
+    },
+    {
+        "user": "Yara",
+        "img": "https://i.pravatar.cc/150?img=25",
+        "text": "Great sitter 📸. Sent me cute photos of the kids during the evening.",
+        "date": "2025-08-29T18:15:00"
+    },
+    {
+        "user": "Zane",
+        "img": "https://i.pravatar.cc/150?img=26",
+        "text": "Sitter was fine ⚖️. Kids were okay, but she didn’t really play with them much.",
+        "date": "2025-08-29T20:30:00"
+    },
+    {
+        "user": "Amelia",
+        "img": "https://i.pravatar.cc/150?img=27",
+        "text": "She handled three kids like a pro 👏. Really grateful for her patience.",
+        "date": "2025-08-30T18:00:00"
+    },
+    {
+        "user": "Ben",
+        "img": "https://i.pravatar.cc/150?img=28",
+        "text": "Forgot to walk the dog ❌. Not happy with the service.",
+        "date": "2025-08-30T21:15:00"
+    },
+    {
+        "user": "Celine",
+        "img": "https://i.pravatar.cc/150?img=29",
+        "text": "Truly lovely sitter 💕. My baby smiled the whole time she was around.",
+        "date": "2025-09-01T19:45:00"
+    },
+    {
+        "user": "Daniel",
+        "img": "https://i.pravatar.cc/150?img=30",
+        "text": "Pretty decent ⚖️. Kids were safe, but sitter didn’t do anything extra.",
+        "date": "2025-09-01T21:00:00"
+    },
+    {
+        "user": "Eva",
+        "img": "https://i.pravatar.cc/150?img=31",
+        "text": "Hands down the best sitter we’ve ever hired 🥰. Helped with homework and bedtime.",
+        "date": "2025-09-02T19:15:00"
+    },
+    {
+        "user": "Felix",
+        "img": "https://i.pravatar.cc/150?img=32",
+        "text": "Distracted sitter ❌. Answered phone calls during the evening.",
+        "date": "2025-09-02T21:20:00"
+    },
+    {
+        "user": "Gina",
+        "img": "https://i.pravatar.cc/150?img=33",
+        "text": "Perfect sitter 💖. Kids had fun, bedtime was smooth, house was tidy.",
+        "date": "2025-09-03T20:30:00"
+    },
+    {
+        "user": "Henry",
+        "img": "https://i.pravatar.cc/150?img=34",
+        "text": "Service was fine ⚖️. Nothing special, but no complaints.",
+        "date": "2025-09-03T21:45:00"
+    },
+    {
+        "user": "Ivy",
+        "img": "https://i.pravatar.cc/150?img=35",
+        "text": "The sitter was amazing ✨. She even left snacks for the kids for the next morning.",
+        "date": "2025-09-04T18:50:00"
+    },
+    {
+        "user": "Jack",
+        "img": "https://i.pravatar.cc/150?img=36",
+        "text": "Not good ❌. Kids said she barely interacted with them.",
+        "date": "2025-09-04T20:15:00"
+    },
+    {
+        "user": "Kara",
+        "img": "https://i.pravatar.cc/150?img=37",
+        "text": "Friendly sitter 🌸. My kids liked her, and she was very polite.",
+        "date": "2025-09-05T19:00:00"
+    },
+    {
+        "user": "Leo",
+        "img": "https://i.pravatar.cc/150?img=38",
+        "text": "Average sitter ⚖️. My dog was safe, but not much playtime.",
+        "date": "2025-09-05T21:10:00"
+    },
+    {
+        "user": "Maya",
+        "img": "https://i.pravatar.cc/150?img=39",
+        "text": "Fantastic sitter 🙌. She kept my kids busy with puzzles and games all evening.",
+        "date": "2025-09-06T18:20:00"
+    },
+    {
+        "user": "Nathan",
+        "img": "https://i.pravatar.cc/150?img=40",
+        "text": "Poor experience ❌. Sitter didn’t clean up after the kids.",
+        "date": "2025-09-06T20:00:00"
+    },
+    {
+        "user": "Olivia",
+        "img": "https://i.pravatar.cc/150?img=41",
+        "text": "Lovely sitter 💕. My kids already asked me to hire her again.",
+        "date": "2025-09-07T19:15:00"
+    },
+    {
+        "user": "Paul",
+        "img": "https://i.pravatar.cc/150?img=42",
+        "text": "Decent service ⚖️. Kids were safe, but not very entertained.",
+        "date": "2025-09-07T21:00:00"
+    },
+    {
+        "user": "Queenie",
+        "img": "https://i.pravatar.cc/150?img=43",
+        "text": "The sitter was fantastic 🌟. She even folded laundry while kids slept.",
+        "date": "2025-09-08T18:45:00"
+    },
+    {
+        "user": "Riley",
+        "img": "https://i.pravatar.cc/150?img=44",
+        "text": "Very poor ❌. She ignored instructions and didn’t engage with the kids.",
+        "date": "2025-09-08T21:30:00"
+    },
+    {
+        "user": "Sara",
+        "img": "https://i.pravatar.cc/150?img=45",
+        "text": "Excellent sitter ✨. Arrived early and was well-prepared.",
+        "date": "2025-09-09T19:00:00"
+    },
+    {
+        "user": "Tommy",
+        "img": "https://i.pravatar.cc/150?img=46",
+        "text": "Mediocre ⚖️. The sitter didn’t do anything wrong, but kids weren’t thrilled.",
+        "date": "2025-09-09T20:15:00"
+    },
+    {
+        "user": "Uma",
+        "img": "https://i.pravatar.cc/150?img=47",
+        "text": "Amazing 💖. She played guitar for the kids and made bedtime fun.",
+        "date": "2025-09-10T19:30:00"
+    },
+    {
+        "user": "Victor",
+        "img": "https://i.pravatar.cc/150?img=48",
+        "text": "Not happy ❌. She spent too much time texting on her phone.",
+        "date": "2025-09-10T21:00:00"
+    }
+]

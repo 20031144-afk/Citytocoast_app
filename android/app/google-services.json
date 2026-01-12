@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1045247059928",
+    "project_id": "sitterapp-2314e",
+    "storage_bucket": "sitterapp-2314e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1045247059928:android:3dec8c47fa11fe8b2834ad",
+        "android_client_info": {
+          "package_name": "com.example.citytocoast_app1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBH7iurBa3KNXJrz7ADjpSuivTk9NsMjnQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

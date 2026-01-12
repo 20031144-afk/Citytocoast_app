@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "firebase functions:config:set stripe.secret_key=\"sk_test_51Slfmc2HFbuT0QITjW8bTO0InXu8VcJ7ZzI4xpQrT0151v5pyCr5vnRRPPPVnqFotvM6jAHJDqQ0lwUsnhCsx8zL00MaeCLSFG\" --project sitterapp-2314e": "sitterapp-2314e"
+  },
+  "targets": {},
+  "etags": {}
+}

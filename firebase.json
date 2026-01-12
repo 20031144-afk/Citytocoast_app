@@ -1,0 +1,51 @@
+{
+  "functions": {
+    "source": "functions"
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "sitterapp-2314e",
+          "appId": "1:1045247059928:android:3dec8c47fa11fe8b2834ad",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "sitterapp-2314e",
+          "appId": "1:1045247059928:ios:9f76da9e854010722834ad",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "sitterapp-2314e",
+          "configurations": {
+            "android": "1:1045247059928:android:3dec8c47fa11fe8b2834ad",
+            "ios": "1:1045247059928:ios:9f76da9e854010722834ad"
+          }
+        }
+      }
+    }
+  },
+  "emulators": {
+    "functions": {
+      "port": 5002,
+      "host": "0.0.0.0"
+    },
+    "ui": {
+      "port": 4001,
+      "host": "0.0.0.0"
+    },
+    "hub": {
+      "port": 4401,
+      "host": "0.0.0.0"
+    },
+    "logging": {
+      "port": 4501,
+      "host": "0.0.0.0"
+    }
+  }
+}
