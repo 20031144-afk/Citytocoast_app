@@ -215,7 +215,7 @@ class _JoinOurTeamState extends State<JoinOurTeam> {
 
     try {
       final String scriptUrl =
-          'https://script.google.com/macros/s/AKfycbxPjudwHBLQY0CWQF41fF-I-rEOVIT1C-wuayfkhRtgkMOjC2YJutcFCFH2eKt7QlpSEw/exec';
+          'https://script.google.com/macros/s/AKfycbxGQOeuN5uGQnuALdLPtF3ivqdJWFKxyuWhxf3OMfISfqXydv2yCdp3Qlkz0YEtuKoluw/exec';
 
       final Map<String, dynamic> data = {
         'firstName': firstNameCtrl.text.trim(),

@@ -19,8 +19,8 @@ class _ContactUsPageState extends State<ContactUsPage> {
   final TextEditingController messageCtrl = TextEditingController();
 
   // Dropdown values
-  String? enquiryType;
-  String? hearAboutUs;
+  String enquiryType = 'General Enquiry';
+  String hearAboutUs = 'Friend/Recommendation';
 
   // Dropdown options
   final List<String> enquiryTypes = [
@@ -78,15 +78,15 @@ class _ContactUsPageState extends State<ContactUsPage> {
 
     try {
       const String scriptUrl =
-          'https://script.google.com/macros/s/AKfycbw0xQ_5EWfcd6-QiDbMDZJn_qrvHQHhZ5hnhhbJGsRp4KitxD6rx2u0PG_EAocMsTtkRw/exec';
+          'https://script.google.com/macros/s/AKfycbwKM1QHL7e1ah5lGHIjraeMZpZXGBzwgBXOpO3wakw_w87QOzMjokitqy3nz5WK9NVECA/exec';
 
       final Map<String, String> data = {
         'firstname': firstNameCtrl.text.trim(),
         'email': emailCtrl.text.trim(),
-        'enquiry': enquiryType ?? "",
+        'enquiry': enquiryType,
         'location': locationCtrl.text.trim(),
         'message': messageCtrl.text.trim(),
-        'hearaboutus': hearAboutUs ?? "",
+        'hearaboutus': hearAboutUs,
       };
 
       final response = await http.post(Uri.parse(scriptUrl), body: data);
@@ -140,8 +140,8 @@ class _ContactUsPageState extends State<ContactUsPage> {
     locationCtrl.clear();
     messageCtrl.clear();
     setState(() {
-      enquiryType = null;
-      hearAboutUs = null;
+      enquiryType = enquiryTypes.first;
+      hearAboutUs = hearAboutOptions.first;
     });
   }
 
@@ -348,7 +348,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
             label: 'What are you enquiring about?*',
             value: enquiryType,
             items: enquiryTypes,
-            onChanged: (value) => setState(() => enquiryType = value),
+            onChanged: (value) => setState(() => enquiryType = value!),
             hintText: 'General Enquiry',
           ),
           const SizedBox(height: 16),
@@ -377,7 +377,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
             label: 'How did you hear about us?*',
             value: hearAboutUs,
             items: hearAboutOptions,
-            onChanged: (value) => setState(() => hearAboutUs = value),
+            onChanged: (value) => setState(() => hearAboutUs = value!),
             hintText: 'Friend/Recommendation',
           ),
           const SizedBox(height: 32),
@@ -494,7 +494,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
             border: Border.all(color: Colors.grey.shade300),
           ),
           child: DropdownButtonFormField<String>(
-            initialValue: value,
+            value: value,
             items: items.map((String value) {
               return DropdownMenuItem<String>(value: value, child: Text(value));
             }).toList(),
@@ -507,12 +507,6 @@ class _ContactUsPageState extends State<ContactUsPage> {
               ),
               hintText: hintText,
             ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please select an option';
-              }
-              return null;
-            },
           ),
         ),
       ],

@@ -30,7 +30,7 @@ class _FamiliesScreenState extends State<FamiliesScreen> {
 
     try {
       const String scriptUrl =
-          'https://script.google.com/macros/s/AKfycbyTC6JtDkPWjk5IxID1NUNjSPAESJ0HPm2EN28eZ7qISUiYzbNWptSLEVrz9tHekbZHZA/exec';
+          'https://script.google.com/macros/s/AKfycbzRvjLk5HdLpVGOLnDKnMfjh4ztSjgX_JH_2VlYpbnqXYuES9hsNQU7Q45-mTqiyC7naQ/exec';
 
       final Map<String, String> data = {
         'name': _nameController.text.trim(),
